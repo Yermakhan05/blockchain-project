@@ -1,0 +1,23 @@
+{
+  "networks": {
+    "bnbTestnet": {
+      "chainId": 97,
+      "rpcUrl": "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      "explorer": "https://testnet.bscscan.com",
+      "contracts": {
+        "verifier": "0x84B358Dd97a897d5B37D9c468D14b8Db356FA2Ec",
+        "rollup": "0x0fa26ea67a179EF076F59532f1cC7A4954AbEE1E"
+      }
+    },
+    "localhost": {
+      "chainId": 1337,
+      "rpcUrl": "http://127.0.0.1:8545",
+      "explorer": null,
+      "contracts": {
+        "verifier": null,
+        "rollup": null
+      }
+    }
+  }
+}
+

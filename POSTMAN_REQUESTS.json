@@ -1,0 +1,386 @@
+{
+  "info": {
+    "name": "ZK-Rollup API",
+    "description": "Complete API collection for ZK-Rollup prototype",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "health"]
+        },
+        "description": "Check if the server is running"
+      }
+    },
+    {
+      "name": "Get State",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/state",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "state"]
+        },
+        "description": "Get current state: Merkle root, transactions, batches, gas savings"
+      }
+    },
+    {
+      "name": "Deposit - Account 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"address\": \"0x111\",\n  \"balance\": 1000\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/account/deposit",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "account", "deposit"]
+        },
+        "description": "Deposit funds to account 0x111"
+      }
+    },
+    {
+      "name": "Deposit - Account 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"address\": \"0x222\",\n  \"balance\": 500\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/account/deposit",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "account", "deposit"]
+        },
+        "description": "Deposit funds to account 0x222"
+      }
+    },
+    {
+      "name": "Deposit - Account 3",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"address\": \"0x333\",\n  \"balance\": 2000\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/account/deposit",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "account", "deposit"]
+        },
+        "description": "Deposit funds to account 0x333"
+      }
+    },
+    {
+      "name": "Transaction 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"from\": \"0x111\",\n  \"to\": \"0x222\",\n  \"amount\": 100\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/transaction",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "transaction"]
+        },
+        "description": "Send transaction from 0x111 to 0x222"
+      }
+    },
+    {
+      "name": "Transaction 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"from\": \"0x111\",\n  \"to\": \"0x222\",\n  \"amount\": 50\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/transaction",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "transaction"]
+        },
+        "description": "Send transaction from 0x111 to 0x222"
+      }
+    },
+    {
+      "name": "Transaction 3",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"from\": \"0x222\",\n  \"to\": \"0x333\",\n  \"amount\": 75\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/transaction",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "transaction"]
+        },
+        "description": "Send transaction from 0x222 to 0x333"
+      }
+    },
+    {
+      "name": "Transaction 4",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"from\": \"0x333\",\n  \"to\": \"0x111\",\n  \"amount\": 200\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/transaction",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "transaction"]
+        },
+        "description": "Send transaction from 0x333 to 0x111 (this will create a batch)"
+      }
+    },
+    {
+      "name": "Get All Transactions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/transactions?limit=10",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "transactions"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        },
+        "description": "Get all transactions (limit 10)"
+      }
+    },
+    {
+      "name": "Get All Transactions (No Limit)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/transactions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "transactions"]
+        },
+        "description": "Get all transactions without limit"
+      }
+    },
+    {
+      "name": "Get All Batches",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/batches",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "batches"]
+        },
+        "description": "Get all batches with transactions, roots, and status"
+      }
+    },
+    {
+      "name": "Submit Batch to L1 (Batch 0)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/batch/0/submit",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "batch", "0", "submit"]
+        },
+        "description": "Submit batch #0 to L1 (if not already submitted)"
+      }
+    },
+    {
+      "name": "Submit Batch to L1 (Batch 1)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/batch/1/submit",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "batch", "1", "submit"]
+        },
+        "description": "Submit batch #1 to L1"
+      }
+    },
+    {
+      "name": "Get Batch by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/batch/0",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "batch", "0"]
+        },
+        "description": "Get batch details by ID"
+      }
+    },
+    {
+      "name": "Create Batch Manually",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/batch/create",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "batch", "create"]
+        },
+        "description": "Manually create a batch from pending transactions"
+      }
+    },
+    {
+      "name": "Generate Proof for Batch",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/batch/0/generate-proof",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "batch", "0", "generate-proof"]
+        },
+        "description": "Generate ZK-proof for a batch"
+      }
+    },
+    {
+      "name": "Get Account Balance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"address\": \"0x111\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/account/balance",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "account", "balance"]
+        },
+        "description": "Get balance for an account"
+      }
+    },
+    {
+      "name": "Get Transactions by Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/transactions?status=pending",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "transactions"],
+          "query": [
+            {
+              "key": "status",
+              "value": "pending"
+            }
+          ]
+        },
+        "description": "Get transactions filtered by status (pending, processing, submitted, verified)"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
+

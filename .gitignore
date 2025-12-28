@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+
+# Hardhat
+cache/
+artifacts/
+typechain/
+typechain-types/
+
+# Circuit files (large, generated)
+circuits/*.ptau
+circuits/*.zkey
+circuits/*.r1cs
+circuits/*.sym
+circuits/*.wtns
+circuits/*_js/
+circuits/proof*.json
+circuits/public*.json
+circuits/witness*.wtns
+circuits/verification_key.json
+
+# Keep input.json for testing
+!circuits/input.json
+
+# Sequencer state
+sequencer/state.json
+sequencer/txPool.json
+
+# Deployments
+deployments/*.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp

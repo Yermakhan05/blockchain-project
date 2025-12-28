@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZK-Rollup Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            color: #333;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-card .merkle-root {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            color: #667eea;
+        }
+
+        .gas-savings-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .gas-savings-card h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .gas-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .gas-metric {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .gas-metric h4 {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .gas-metric .value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .gas-metric .label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .gas-savings-bar {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .gas-savings-bar h4 {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            height: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #059669;
+            font-weight: bold;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .gas-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .transaction-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item:hover {
+            background: #f9f9f9;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-from-to {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .transaction-amount {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .transaction-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-processing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-submitted {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .batch-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .batch-item {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .batch-item:hover {
+            border-color: #667eea;
+        }
+
+        .batch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .batch-id {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .batch-transactions {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .flow-diagram {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .flow-step.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .flow-step h4 {
+            font-size: 12px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .flow-step .step-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔐 ZK-Rollup Dashboard</h1>
+            <div class="subtitle">Layer-2 Scaling Solution with Zero-Knowledge Proofs</div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Current Merkle Root</h3>
+                <div class="value merkle-root" id="merkleRoot">Loading...</div>
+            </div>
+            <div class="stat-card">
+                <h3>Pending Transactions</h3>
+                <div class="value" id="pendingCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Transactions</h3>
+                <div class="value" id="totalTransactions">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Batches</h3>
+                <div class="value" id="totalBatches">0</div>
+            </div>
+        </div>
+
+        <!-- Gas Savings Section -->
+        <div class="gas-savings-card">
+            <h2>💰 Gas Savings</h2>
+            <div class="gas-comparison">
+                <div class="gas-metric">
+                    <h4>Direct L1</h4>
+                    <div class="value" id="gasDirect">0</div>
+                    <div class="label">gas</div>
+                    <div class="label" style="margin-top: 5px; font-size: 12px;" id="gasPerTxL1">~21,000 per TX</div>
+                </div>
+                <div class="gas-metric">
+                    <h4>ZK-Rollup</h4>
+                    <div class="value" id="gasRollup">0</div>
+                    <div class="label">gas</div>
+                    <div class="label" style="margin-top: 5px; font-size: 12px;" id="gasPerTxRollup">~8,467 per TX</div>
+                </div>
+                <div class="gas-metric">
+                    <h4>Savings</h4>
+                    <div class="value" id="gasSaved">0</div>
+                    <div class="label">gas</div>
+                    <div class="label" style="margin-top: 5px; font-size: 12px;" id="gasSavingsPercent">0%</div>
+                </div>
+            </div>
+            <div class="gas-savings-bar">
+                <h4>Gas Savings Progress</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="gasSavingsProgress" style="width: 0%">
+                        0%
+                    </div>
+                </div>
+                <div style="margin-top: 10px; font-size: 12px; opacity: 0.9;">
+                    <strong id="gasSavingsText">No transactions yet</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flow Diagram -->
+        <div class="flow-diagram">
+            <h2 style="margin-bottom: 20px; color: #333;">ZK-Rollup Process Flow</h2>
+            <div class="flow-steps">
+                <div class="flow-step" id="step1">
+                    <h4>1. Submit TX</h4>
+                    <div class="step-value" id="step1Value">0</div>
+                </div>
+                <div class="flow-step" id="step2">
+                    <h4>2. Batch</h4>
+                    <div class="step-value" id="step2Value">0</div>
+                </div>
+                <div class="flow-step" id="step3">
+                    <h4>3. Merkle Tree</h4>
+                    <div class="step-value" id="step3Value">-</div>
+                </div>
+                <div class="flow-step" id="step4">
+                    <h4>4. ZK-Proof</h4>
+                    <div class="step-value" id="step4Value">-</div>
+                </div>
+                <div class="flow-step" id="step5">
+                    <h4>5. L1 Verify</h4>
+                    <div class="step-value" id="step5Value">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Send Transaction -->
+            <div class="card">
+                <h2>📤 Send L2 Transaction</h2>
+                <div id="alertContainer"></div>
+                <form id="transactionForm">
+                    <div class="form-group">
+                        <label>From Address</label>
+                        <input type="text" id="fromAddress" placeholder="0x..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>To Address</label>
+                        <input type="text" id="toAddress" placeholder="0x..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="amount" placeholder="100" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        Send Transaction
+                    </button>
+                </form>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="card">
+                <h2>📋 Recent Transactions</h2>
+                <div class="transaction-list" id="transactionList">
+                    <div style="padding: 20px; text-align: center; color: #999;">
+                        No transactions yet
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Batches -->
+        <div class="card">
+            <h2>📦 Batches</h2>
+            <div class="batch-list" id="batchList">
+                <div style="padding: 20px; text-align: center; color: #999;">
+                    No batches yet
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Base URL
+        const API_BASE = '/api';
+
+        // State
+        let state = {
+            merkleRoot: '0x0',
+            pendingCount: 0,
+            totalTransactions: 0,
+            totalBatches: 0
+        };
+
+        // ============================================================================
+        // API Functions
+        // ============================================================================
+
+        async function fetchState() {
+            try {
+                const response = await fetch(`${API_BASE}/state`);
+                const data = await response.json();
+                state = data;
+                updateUI();
+            } catch (error) {
+                console.error('Error fetching state:', error);
+            }
+        }
+
+        async function sendTransaction(from, to, amount) {
+            const response = await fetch(`${API_BASE}/transaction`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ from, to, amount })
+            });
+            return await response.json();
+        }
+
+        async function fetchTransactions() {
+            const response = await fetch(`${API_BASE}/transactions?limit=10`);
+            const data = await response.json();
+            return data.transactions;
+        }
+
+        async function fetchBatches() {
+            const response = await fetch(`${API_BASE}/batches`);
+            const data = await response.json();
+            return data.batches;
+        }
+
+        async function submitBatch(batchId) {
+            const response = await fetch(`${API_BASE}/batch/${batchId}/submit`, {
+                method: 'POST'
+            });
+            return await response.json();
+        }
+
+        // ============================================================================
+        // UI Updates
+        // ============================================================================
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function updateUI() {
+            // Update stats
+            document.getElementById('merkleRoot').textContent = 
+                state.merkleRoot || '0x0';
+            document.getElementById('pendingCount').textContent = 
+                state.pendingTransactions || 0;
+            document.getElementById('totalTransactions').textContent = 
+                state.totalTransactions || 0;
+            document.getElementById('totalBatches').textContent = 
+                state.totalBatches || 0;
+
+            // Update flow diagram
+            document.getElementById('step1Value').textContent = state.totalTransactions || 0;
+            document.getElementById('step2Value').textContent = state.totalBatches || 0;
+            document.getElementById('step3Value').textContent = state.merkleRoot && state.merkleRoot !== '0x0' ? '✓' : '-';
+            
+            // Update ZK-Proof step (step 4)
+            const proofsCount = state.proofsGenerated || 0;
+            document.getElementById('step4Value').textContent = proofsCount > 0 ? proofsCount : '-';
+            
+            // Update L1 Verify step (step 5)
+            const submittedCount = state.batchesSubmitted || 0;
+            document.getElementById('step5Value').textContent = submittedCount > 0 ? submittedCount : '-';
+
+            // Update gas savings
+            if (state.gasSavings) {
+                const gs = state.gasSavings;
+                
+                document.getElementById('gasDirect').textContent = formatNumber(gs.gasIfDirect);
+                document.getElementById('gasRollup').textContent = formatNumber(gs.gasViaRollup);
+                document.getElementById('gasSaved').textContent = formatNumber(gs.gasSaved);
+                document.getElementById('gasSavingsPercent').textContent = `${gs.gasSavingsPercent}%`;
+                
+                document.getElementById('gasPerTxL1').textContent = `~${formatNumber(gs.gasPerTxL1)} per TX`;
+                document.getElementById('gasPerTxRollup').textContent = gs.gasPerTxRollup > 0 
+                    ? `~${formatNumber(gs.gasPerTxRollup)} per TX` 
+                    : 'No batches yet';
+                
+                // Update progress bar
+                const progressBar = document.getElementById('gasSavingsProgress');
+                const percent = Math.max(0, Math.min(100, gs.gasSavingsPercent));
+                progressBar.style.width = `${percent}%`;
+                progressBar.textContent = `${gs.gasSavingsPercent}%`;
+                
+                // Update savings text
+                const savingsText = document.getElementById('gasSavingsText');
+                if (state.totalTransactions === 0) {
+                    savingsText.textContent = 'No transactions yet';
+                } else if (gs.gasSavingsPercent > 0) {
+                    savingsText.textContent = 
+                        `Saved ${formatNumber(gs.gasSaved)} gas (${gs.gasSavingsPercent}%) by batching ${state.totalTransactions} transactions into ${state.totalBatches} batches`;
+                } else {
+                    savingsText.textContent = 'No savings yet - send more transactions to see the benefit!';
+                }
+            } else {
+                // Default values when no gas savings data
+                document.getElementById('gasDirect').textContent = '0';
+                document.getElementById('gasRollup').textContent = '0';
+                document.getElementById('gasSaved').textContent = '0';
+                document.getElementById('gasSavingsPercent').textContent = '0%';
+                document.getElementById('gasPerTxL1').textContent = '~21,000 per TX';
+                document.getElementById('gasPerTxRollup').textContent = 'No batches yet';
+                document.getElementById('gasSavingsProgress').style.width = '0%';
+                document.getElementById('gasSavingsProgress').textContent = '0%';
+                document.getElementById('gasSavingsText').textContent = 'No transactions yet';
+            }
+        }
+
+        function renderTransactions(transactions) {
+            const container = document.getElementById('transactionList');
+            if (transactions.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No transactions yet</div>';
+                return;
+            }
+
+            container.innerHTML = transactions.slice().reverse().map(tx => `
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <div class="transaction-from-to">
+                            ${tx.from.slice(0, 6)}... → ${tx.to.slice(0, 6)}...
+                        </div>
+                        <div class="transaction-amount">
+                            Amount: ${tx.amount}
+                        </div>
+                    </div>
+                    <div class="transaction-status status-${tx.status}" >
+                        ${tx.status}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderBatches(batches) {
+            const container = document.getElementById('batchList');
+            if (batches.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No batches yet</div>';
+                return;
+            }
+
+            container.innerHTML = batches.slice().reverse().map(batch => `
+                <div class="batch-item">
+                    <div class="batch-header">
+                        <div>
+                            <span class="batch-id">Batch #${batch.id}</span>
+                            <span class="transaction-status status-${batch.status}" style="margin-left: 10px;">
+                                ${batch.status}
+                            </span>
+                        </div>
+                        ${batch.status === 'processing' ? `
+                            <button class="btn btn-success" onclick="handleSubmitBatch(${batch.id})">
+                                Submit to L1
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="batch-transactions">
+                        ${batch.transactions.length} transaction(s)
+                        ${batch.createdAt ? ` • Created: ${new Date(batch.createdAt).toLocaleString()}` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // ============================================================================
+        // Event Handlers
+        // ============================================================================
+
+        document.getElementById('transactionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const from = document.getElementById('fromAddress').value;
+            const to = document.getElementById('toAddress').value;
+            const amount = document.getElementById('amount').value;
+            const submitBtn = document.getElementById('submitBtn');
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> Sending...';
+
+            try {
+                const result = await sendTransaction(from, to, amount);
+                if (result.success) {
+                    showAlert('Transaction sent successfully!', 'success');
+                    document.getElementById('transactionForm').reset();
+                    await refreshData();
+                } else {
+                    showAlert(result.error || 'Failed to send transaction', 'error');
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Transaction';
+            }
+        });
+
+        async function handleSubmitBatch(batchId) {
+            if (!confirm('Submit this batch to L1?')) return;
+
+            try {
+                const result = await submitBatch(batchId);
+                if (result.success) {
+                    showAlert('Batch submitted to L1!', 'success');
+                    await refreshData();
+                } else {
+                    showAlert(result.error || 'Failed to submit batch', 'error');
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function refreshData() {
+            await fetchState();
+            const transactions = await fetchTransactions();
+            const batches = await fetchBatches();
+            renderTransactions(transactions);
+            renderBatches(batches);
+        }
+
+        // ============================================================================
+        // Initialization
+        // ============================================================================
+
+        // Initial load
+        refreshData();
+
+        // Auto-refresh every 3 seconds
+        setInterval(refreshData, 3000);
+
+        // Make handleSubmitBatch available globally
+        window.handleSubmitBatch = handleSubmitBatch;
+    </script>
+</body>
+</html>
+
